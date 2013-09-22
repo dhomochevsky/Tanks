@@ -1,0 +1,31 @@
+{
+	"tiles": {
+		"brick": {
+			"collidable": true,
+			"sprite": "brick"
+		},
+		"grass": {
+			"armor": 2,
+			"sprite": "grass"
+		},
+		"water": {
+			"collidable": true,
+			"sprite": "brick"
+		},
+		"ice": {
+			"slipperyness": 1,
+			"sprite": "pavement"
+		},
+		"concrete": {
+			"collidable": true,
+			"armor": 1,
+			"sprite": "metal"
+		},
+		"empty": {
+		}
+	},
+
+	"mapSize": 2,
+
+	"map": ["brick", "grass", "concrete", "ice"]
+}

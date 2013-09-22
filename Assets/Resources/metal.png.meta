@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2a4104764b6bb1c488d05802fe22e187
+guid: ae9907da1f44c5943b0722ad2a15bb20
 TextureImporter:
   serializedVersion: 2
   mipmaps:
@@ -49,8 +49,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 16
-        height: 16
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: .5, y: .5}
   spriteAtlasHint: 
