@@ -21,6 +21,11 @@ public class PlayerControl : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+    }
+
+    // ReSharper disable CompareOfFloatsByEqualityOperator
+    private void FixedUpdate()
+    {
         if ((Input.GetButtonDown("Up") || Input.GetButtonDown("Down")) ||
             (Input.GetButtonUp("Left") || Input.GetButtonUp("Right")))
         {
@@ -31,22 +36,16 @@ public class PlayerControl : MonoBehaviour {
         {
             moveHorizontal = true;
         }
-    }
 
-    // ReSharper disable CompareOfFloatsByEqualityOperator
-    private void FixedUpdate()
-    {
         float x = (Input.GetButton("Left") ? -1 : 0) + (Input.GetButton("Right") ? 1 : 0);
         float y = (Input.GetButton("Down") ? -1 : 0) + (Input.GetButton("Up") ? 1 : 0);
 
-        if (moveHorizontal)
+        if (x != 0f && y != 0f)
         {
-            rigidbody2D.velocity = new Vector2(x*maxSpeed, 0f);
+            x = (moveHorizontal ? x : 0f);
+            y = (moveHorizontal ? 0f : y);
         }
-        else
-        {
-            rigidbody2D.velocity = new Vector2(0f, y*maxSpeed);
-        }
+        rigidbody2D.velocity = new Vector2(x*maxSpeed,y*maxSpeed);
     }
     // ReSharper restore CompareOfFloatsByEqualityOperator
 }
