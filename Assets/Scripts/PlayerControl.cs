@@ -5,7 +5,7 @@ public class PlayerControl : MonoBehaviour {
     public float moveForce = 365f;			// Amount of force added to move the player left and right.
     public float maxSpeed = 2f;				// The fastest the player can travel in the x axis.
 
-    private float prevX, prevY;
+    private bool moveHorizontal;
 
     // Use this for initialization
     void Start()
@@ -15,39 +15,38 @@ public class PlayerControl : MonoBehaviour {
 
     void Awake()
     {
-        prevX = 0f;
-        prevY = 0f;
+        moveHorizontal = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButton("Horizontal"))
+        if ((Input.GetButtonDown("Up") || Input.GetButtonDown("Down")) ||
+            (Input.GetButtonUp("Left") || Input.GetButtonUp("Right")))
         {
-            Debug.Log("foo");
+            moveHorizontal = false;
+        }
+        if ((Input.GetButtonDown("Left") || Input.GetButtonDown("Right")) ||
+            (Input.GetButtonUp("Up") || Input.GetButtonUp("Down")))
+        {
+            moveHorizontal = true;
         }
     }
 
     // ReSharper disable CompareOfFloatsByEqualityOperator
     private void FixedUpdate()
     {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-        Debug.Log(y);
-        x = (x == 0f ? 0 : Mathf.Sign(x));
-        y = (y == 0f ? 0 : Mathf.Sign(y));
+        float x = (Input.GetButton("Left") ? -1 : 0) + (Input.GetButton("Right") ? 1 : 0);
+        float y = (Input.GetButton("Down") ? -1 : 0) + (Input.GetButton("Up") ? 1 : 0);
 
-        if (true)
+        if (moveHorizontal)
         {
-            rigidbody2D.velocity = new Vector2(0f, y * maxSpeed);
+            rigidbody2D.velocity = new Vector2(x*maxSpeed, 0f);
         }
         else
         {
-            rigidbody2D.velocity = new Vector2(x * maxSpeed, 0f);
+            rigidbody2D.velocity = new Vector2(0f, y*maxSpeed);
         }
-
-        prevX = x;
-        prevY = y;
     }
     // ReSharper restore CompareOfFloatsByEqualityOperator
 }
