@@ -52,6 +52,37 @@ public class PlayerControl : MonoBehaviour {
 
         float speed = ((x == 0f && y == 0f) ? 0f : 1f);
         anim.speed = speed*animationSpeed;
+
+        SetFacing();
+    }
+
+    private void SetFacing()
+    {
+        float x = rigidbody2D.velocity.x;
+        float y = rigidbody2D.velocity.y;
+
+        if (x > 0)
+        {
+            transform.localRotation = Quaternion.identity;
+            transform.Rotate(0,0,-90);
+            transform.localScale = new Vector3(1,1,1);
+        }
+        else if (x < 0)
+        {
+            transform.localRotation = Quaternion.identity;
+            transform.Rotate(0, 0, 90);
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else if (y > 0)
+        {
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (y < 0)
+        {
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = new Vector3(1, -1, 1);
+        }
     }
     // ReSharper restore CompareOfFloatsByEqualityOperator
 }
