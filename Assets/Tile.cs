@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
@@ -27,8 +28,11 @@ public class Tile : MonoBehaviour
 	
 	}
 
-    void destroy()
+    public event EventHandler destroyed;
+
+    public virtual void destroy()
     {
-        this.map.makeGameObject("empty", (int) position.x, (int) position.y);
+        this.map.makeTileFromTemplate("empty", (uint) position.x, (uint) position.y);
+        this.destroyed(this, EventArgs.Empty);
     }
 }
