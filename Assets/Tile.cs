@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
-using System.Runtime.Serialization;
 
 public class Tile : MonoBehaviour
 {
+    public MapDrawer map;
+
     // if tanks or bullets stop when hitting it
     public bool collidable = false;
 
@@ -14,6 +15,8 @@ public class Tile : MonoBehaviour
 
     public string sprite = "";
 
+    public Vector2 position;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -23,4 +26,9 @@ public class Tile : MonoBehaviour
 	void Update () {
 	
 	}
+
+    void destroy()
+    {
+        this.map.makeGameObject("empty", (int) position.x, (int) position.y);
+    }
 }

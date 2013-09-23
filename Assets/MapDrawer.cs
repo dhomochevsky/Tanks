@@ -13,7 +13,7 @@ public class MapDrawer : MonoBehaviour
     [DataContract]
     private class MapFile
     {
-        [DataMember] public Dictionary<string, GameObjectDefinition> tiles;
+        [DataMember] public Dictionary<string, TileDefinition> tiles;
 
         [DataMember] public int mapSize;
 
@@ -21,7 +21,7 @@ public class MapDrawer : MonoBehaviour
     }
 
     [DataContract]
-    private class GameObjectDefinition
+    private class TileDefinition
     {
         // if tanks or bullets stop when hitting it
         [DataMember] public bool collidable = false;
@@ -34,6 +34,8 @@ public class MapDrawer : MonoBehaviour
 
         [DataMember] public string sprite = "";
     }
+
+    private MapFile mapDefinition;
 
 
     public GameObject[,] map;
@@ -54,29 +56,42 @@ public class MapDrawer : MonoBehaviour
 	    var map = Resources.Load<TextAsset>(fileName);
 
         var reader = new JsonReader(new DataReaderSettings(new DataContractResolverStrategy()));
-        var mapFile = reader.Read<MapFile>(map.text);
-        if (mapFile.map.Length != Math.Pow(mapFile.mapSize, 2))
+        mapDefinition = reader.Read<MapFile>(map.text);
+        int mapSize = mapDefinition.mapSize;
+        if (mapDefinition.map.Length != mapSize * mapSize)
         {
             throw new Exception("invalid map size");
         }
 
-        this.map = new GameObject[mapFile.mapSize,mapFile.mapSize];
-        for (var row = 0; row < mapFile.mapSize; row++)
+        this.map = new GameObject[mapSize,mapSize];
+        for (var row = 0; row < mapSize; row++)
         {
-            for (var column = 0; column < mapFile.mapSize; column++)
+            for (var column = 0; column < mapSize; column++)
             {
-                var tileName = mapFile.map[row*mapFile.mapSize + column];
-                this.map[row, column] = makeGameObject(mapFile.tiles[tileName].sprite, row, column);
+                var tileName = mapDefinition.map[row*mapSize + column];
+                makeGameObject(tileName, row, column);
             }
         }
     }
 
-    GameObject makeGameObject(string texture, int x, int y)
+    public GameObject makeGameObject(string defName, int x, int y)
     {
-        Debug.Log(texture + " " + x + " " + y);
-	    var newGameObject = Instantiate(tile, new Vector3((float)x / 2, (float)y / 2), Quaternion.identity) as GameObject;
+        Debug.Log(defName + " " + x + " " + y);
 
-	    newGameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(texture);
+        var def = this.mapDefinition.tiles[defName];
+        var position = new Vector2((float) x/2, (float) y/2);
+	    var newGameObject = Instantiate(tile, position, Quaternion.identity) as GameObject;
+
+	    newGameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(def.sprite);
+
+        var tileComponent = newGameObject.GetComponent<Tile>();
+        tileComponent.collidable = def.collidable;
+        tileComponent.slipperyness = def.slipperyness;
+        tileComponent.armor = def.armor;
+        tileComponent.position = position;
+        tileComponent.map = this;
+
+        this.map[x, y] = newGameObject;
 
         return newGameObject;
     }
