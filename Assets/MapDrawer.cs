@@ -79,8 +79,8 @@ public class MapDrawer : MonoBehaviour
         Debug.Log(defName + " " + x + " " + y);
 
         var def = this.mapDefinition.tiles[defName];
-        var position = new Vector2((float) x/2, (float) y/2);
-	    var newGameObject = Instantiate(tile, position, Quaternion.identity) as GameObject;
+        var position = new Vector2(x, y);
+	    var newGameObject = Instantiate(tile, position / 2, Quaternion.identity) as GameObject;
 
 	    newGameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(def.sprite);
 
