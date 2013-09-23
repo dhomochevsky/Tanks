@@ -23,6 +23,7 @@ public class MapDrawer : MonoBehaviour
 
         [DataMember] public uint baseX = 6;
         [DataMember] public uint baseY = 0;
+        [DataMember] public Vector2[] spawners = new Vector2[]{new Vector2(0,2), new Vector2(2,3)};
     }
 
     [DataContract]
@@ -42,6 +43,7 @@ public class MapDrawer : MonoBehaviour
 
     private MapFile mapDefinition;
 
+    public Vector2[] spawners;
 
     public GameObject[,] map;
 
@@ -58,6 +60,8 @@ public class MapDrawer : MonoBehaviour
         {
             throw new Exception("invalid map size");
         }
+
+        this.spawners = mapDefinition.spawners;
 
         this.map = new GameObject[mapSize * mapScale,mapSize * mapScale];
         for (var row = 0u; row < this.map.GetLength(0) / mapScale; row++)

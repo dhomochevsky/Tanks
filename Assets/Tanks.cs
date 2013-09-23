@@ -4,6 +4,7 @@ public class Tanks : MonoBehaviour
 {
     public GameObject level;
     public GameObject lifeCounter;
+    public GameObject tankSpawnCoordinator;
 
 	// Use this for initialization
 	void Start () {
@@ -14,6 +15,8 @@ public class Tanks : MonoBehaviour
 
         enemyLife.position = new Vector2(map.map.GetLength(0), map.map.GetLength(1));
 	    enemyLife.lives = 10;
+
+        tankSpawnCoordinator.GetComponent<TankSpawnCoordinator>().initWithSpawners(map.spawners);
 	}
 	
 	// Update is called once per frame
