@@ -15,9 +15,14 @@ public class MapDrawer : MonoBehaviour
     {
         [DataMember] public Dictionary<string, TileDefinition> tiles;
 
-        [DataMember] public int mapSize;
+        [DataMember] public uint mapSize;
 
         [DataMember] public string[] map;
+
+        [DataMember] public uint mapScale = 2;
+
+        [DataMember] public uint baseX = 6;
+        [DataMember] public uint baseY = 0;
     }
 
     [DataContract]
@@ -40,47 +45,75 @@ public class MapDrawer : MonoBehaviour
 
     public GameObject[,] map;
 
-	// Use this for initialization
-	void Start ()
-	{
-        loadMapFile("map");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    void loadMapFile(string fileName)
+    public void loadMapFile(string fileName)
     {
 	    var map = Resources.Load<TextAsset>(fileName);
 
         var reader = new JsonReader(new DataReaderSettings(new DataContractResolverStrategy()));
         mapDefinition = reader.Read<MapFile>(map.text);
-        int mapSize = mapDefinition.mapSize;
+        var mapSize = mapDefinition.mapSize;
+        var mapScale = mapDefinition.mapScale;
+
         if (mapDefinition.map.Length != mapSize * mapSize)
         {
             throw new Exception("invalid map size");
         }
 
-        this.map = new GameObject[mapSize,mapSize];
-        for (var row = 0; row < mapSize; row++)
+        this.map = new GameObject[mapSize * mapScale,mapSize * mapScale];
+        for (var row = 0u; row < this.map.GetLength(0) / mapScale; row++)
         {
-            for (var column = 0; column < mapSize; column++)
+            for (var column = 0u; column < this.map.GetLength(1) / mapScale; column++)
             {
                 var tileName = mapDefinition.map[row*mapSize + column];
-                makeGameObject(tileName, row, column);
+                makeTileFromTemplate(tileName, row * mapScale, column * mapScale, mapScale);
+            }
+        }
+
+        var baseTile = makeTile(mapDefinition.baseX, mapDefinition.baseY);
+        baseTile.GetComponent<Tile>().destroyed += (sender, args) => Debug.Log("YOU LOSE");
+        setTiles(baseTile, mapDefinition.baseX, mapDefinition.baseY, 4);
+    }
+
+    private void setTiles(GameObject tile, uint x, uint y, uint size)
+    {
+        x = x*mapDefinition.mapScale;
+        for(var row = x; row < x + size; row++)
+        {
+            for(var column = y; column < y + size; column++)
+            {
+                map[row, column] = tile;
             }
         }
     }
 
-    public GameObject makeGameObject(string defName, int x, int y)
+    public GameObject makeTile(uint x, uint y)
     {
-        Debug.Log(defName + " " + x + " " + y);
-
-        var def = this.mapDefinition.tiles[defName];
         var position = new Vector2(x, y);
-	    var newGameObject = Instantiate(tile, position / 2, Quaternion.identity) as GameObject;
+        return makeTile(position);
+    }
+
+    public GameObject makeTile(Vector2 position)
+    {
+	    var newGameObject = Instantiate(tile, position, Quaternion.identity) as GameObject;
+        return newGameObject;
+    }
+
+    public void makeTileFromTemplate(string defName, uint x, uint y, uint size)
+    {
+        for (var row = x; row < x + size; row++)
+        {
+            for (var column = y; column < y + size; column++)
+            {
+                makeTileFromTemplate(defName, column, row);
+            }
+        }
+    }
+
+    public GameObject makeTileFromTemplate(string defName, uint x, uint y)
+    {
+        var def = this.mapDefinition.tiles[defName];
+        var position = new Vector2(x, y) / 2;
+        var newGameObject = makeTile(position);
 
 	    newGameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(def.sprite);
 

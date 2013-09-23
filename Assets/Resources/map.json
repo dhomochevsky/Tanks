@@ -25,7 +25,11 @@
 		}
 	},
 
-	"mapSize": 2,
+	"mapSize": 3,
 
-	"map": ["brick", "grass", "concrete", "ice"]
+	"baseX": 1,
+
+	"baseY": 0,
+
+	"map": ["brick", "grass", "concrete", "ice", "brick", "grass", "concrete", "ice", "brick"]
 }
