@@ -4,6 +4,8 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour {
     public float moveForce = 365f;			// Amount of force added to move the player left and right.
     public float maxSpeed = 2f;				// The fastest the player can travel in the x axis.
+    public float animationSpeed = 10f;
+    private Animator anim;
 
     private bool moveHorizontal;
 
@@ -16,6 +18,7 @@ public class PlayerControl : MonoBehaviour {
     void Awake()
     {
         moveHorizontal = true;
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -46,6 +49,9 @@ public class PlayerControl : MonoBehaviour {
             y = (moveHorizontal ? 0f : y);
         }
         rigidbody2D.velocity = new Vector2(x*maxSpeed,y*maxSpeed);
+
+        float speed = ((x == 0f && y == 0f) ? 0f : 1f);
+        anim.speed = speed*animationSpeed;
     }
     // ReSharper restore CompareOfFloatsByEqualityOperator
 }
